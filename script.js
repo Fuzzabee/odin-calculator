@@ -82,7 +82,28 @@ function addDigitToDisplay(toAdd) {
     return currentInput + toAdd;
 }
 
-function callOperation(op) {
+function convertInputToNumber() {
+    let inputAsNumber;
+    
+    if (hasDecimal) {
+        inputAsNumber = Number.parseFloat(currentInput);
+    } else {
+        inputAsNumber = Number.parseInt(currentInput);
+    }
+
+    if (isNegated) {
+        return -1 * inputAsNumber;
+    }
+    return inputAsNumber;
+}
+
+function displayVariables() {
+    console.log(`num1 = ${num1}`);
+    console.log(`operator = ${operator}`);
+    console.log(`currentInput = ${currentInput}`);
+}
+
+function executeOperation() {
     // First time calling operation after all clear or equals
     if (operator === null) {
         num1 = convertInputToNumber();
@@ -98,21 +119,6 @@ function callOperation(op) {
             num1 = subtract(num1, num2);
             break;
     }
-}
-
-function convertInputToNumber() {
-    let inputAsNumber;
-    
-    if (hasDecimal) {
-        inputAsNumber = Number.parseFloat(currentInput);
-    } else {
-        inputAsNumber = Number.parseInt(currentInput);
-    }
-
-    if (isNegated) {
-        return -1 * inputAsNumber;
-    }
-    return inputAsNumber;
 }
 
 function resetCalculatorVariables() {
@@ -168,7 +174,16 @@ CALC_BUTTON_DOT.addEventListener("click", () => {
 });
 
 CALC_BUTTON_ADD.addEventListener("click", () => {
-    operator = callOperation("+");
+    displayVariables();
+    if (num1 != null && operator != null) { 
+        num2 = convertInputToNumber();
+        num1 = executeOperation(num1, num2);
+    } else {
+        num1 = convertInputToNumber();
+    }
+    operator = "+";
+    currentInput = null;
+    displayVariables()
 });
 
 // CALC_BUTTON_EQUALS.addEventListener("click", () => {
