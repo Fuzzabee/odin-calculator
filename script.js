@@ -41,11 +41,13 @@ const CALC_BUTTON_NEGATE = document.querySelector(".calculator #negate");
 //  VARIABLE DECLARATION  //
 ////////////////////////////
 
-let num1 = 0;
-let num2 = 0;
-let operator = "";
-let currentInput = "0";
+let num1 = null;
+let num2 = null;
+let numEquals = null;
+let operator = null;
+let currentInput = null;
 let isNegated = false;
+let hasDecimal = false;
 
 /////////////////
 //  FUNCTIONS  //
@@ -68,16 +70,64 @@ function divide(num1, num2) {
 }
 
 function addDigitToDisplay(toAdd) {
-    if (currentInput.length === 10 || 
-        (currentInput === "0" && toAdd === 0)) {
+    if ((currentInput != null && currentInput.length === 10) || 
+        (currentInput === null && toAdd === 0)) {
         return currentInput;
     }
     
-    if (currentInput === "0") {
+    if (currentInput === null) {
         return "" + toAdd;
     }
 
     return currentInput + toAdd;
+}
+
+function callOperation(op) {
+    // First time calling operation after all clear or equals
+    if (operator === null) {
+        num1 = convertInputToNumber();
+        return op;
+    }
+
+    // We already have an operation, do operation and save result in num1
+    switch (operator) {
+        case "+":
+            num1 = add(num1, num2);
+            break;
+        case "-":
+            num1 = subtract(num1, num2);
+            break;
+    }
+}
+
+function convertInputToNumber() {
+    let inputAsNumber;
+    
+    if (hasDecimal) {
+        inputAsNumber = Number.parseFloat(currentInput);
+    } else {
+        inputAsNumber = Number.parseInt(currentInput);
+    }
+
+    if (isNegated) {
+        return -1 * inputAsNumber;
+    }
+    return inputAsNumber;
+}
+
+function resetCalculatorVariables() {
+    currentInput = null;
+    num1 = null;
+    num2 = null;
+    numEquals = null;
+    operator = null;
+    isNegated = false;
+    hasDecimal = false;
+}
+
+function updateCalculatorDisplay() {
+    CALC_DISPLAY_NUMBER.textContent = currentInput === null ? "0" : currentInput;
+    CALC_DISPLAY_SIGN.textContent = isNegated ? "-" : "";
 }
 
 ///////////////////////
@@ -88,32 +138,51 @@ for (let i = 0; i < 10; i++) {
     let button = CALC_BUTTONS_NUMBERS[i];
     button.addEventListener("click", () => {
         currentInput = addDigitToDisplay(i);
-        CALC_DISPLAY_NUMBER.textContent = currentInput;
+        updateCalculatorDisplay();
     });
 }
 
 CALC_BUTTON_ALL_CLEAR.addEventListener("click", () => {
-    currentInput = "0";
-    num1 = 0;
-    num2 = 0;
-    operator = "";
-    isNegated = false;
-    CALC_DISPLAY_NUMBER.textContent = currentInput;
-    CALC_DISPLAY_SIGN.textContent = isNegated ? "-" : "";
+    resetCalculatorVariables();
+    updateCalculatorDisplay();
 });
 
 CALC_BUTTON_NEGATE.addEventListener("click", () => {
-    if (currentInput === "0") {
+    if (currentInput === null) {
         return;
     }
 
     isNegated = !isNegated;
-    CALC_DISPLAY_SIGN.textContent = isNegated ? "-" : "";
+    updateCalculatorDisplay();
 });
+
+CALC_BUTTON_DOT.addEventListener("click", () => {
+    if (!hasDecimal) {
+        hasDecimal = true;
+        if (currentInput === null) {
+            currentInput = addDigitToDisplay("0");
+        }
+        currentInput = addDigitToDisplay(".");
+        updateCalculatorDisplay();
+    }
+});
+
+CALC_BUTTON_ADD.addEventListener("click", () => {
+    operator = callOperation("+");
+});
+
+// CALC_BUTTON_EQUALS.addEventListener("click", () => {
+//     if (num2 === null && num1 === null && currentInput === null) {
+//         return;
+//     }
+
+//     if (num2 === null && num1 === null) {
+        
+//     }
+// });
 
 ////////////
 //  MAIN  //
 ////////////
 
-CALC_DISPLAY_NUMBER.textContent = currentInput;
-CALC_DISPLAY_SIGN.textContent = isNegated ? "-" : "";
+updateCalculatorDisplay();
