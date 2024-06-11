@@ -67,6 +67,9 @@ function multiply(num1, num2) {
 }
 
 function divide(num1, num2) {
+    if (num2 === 0) {
+        return "DIV BY 0";
+    }
     return num1 / num2;
 }
 
@@ -184,7 +187,7 @@ function executeOperation() {
 
 function operate(op) {
     if (num1 != null && operator != null) { 
-        if (op === "+" || op === "-") {
+        if (operator === "+" || operator === "-") {
             num2 = currentInput === null ? 0 : convertInputToNumber()
         } else {
             num2 = currentInput === null ? 1 : convertInputToNumber();
