@@ -181,6 +181,28 @@ function executeOperation() {
     }
 }
 
+function operate(op) {
+    if (num1 != null && operator != null) { 
+        num2 = currentInput === null ? 0 : convertInputToNumber();
+        currentInput = convertNumberToString(executeOperation(num1, num2));
+        num1 = currentInput;
+        num2 = null;
+        isNegated = currentInput < 0;
+        if (isNegated) {
+            currentInput = -1 * currentInput;
+        }
+        updateCalculatorDisplay();
+    } else if (num1 != null && numEquals != null && currentInput === null) {
+        num1 = numEquals;
+        numEquals = null;
+    } else {
+        num1 = convertInputToNumber();
+    }
+    operator = op;
+    currentInput = null;
+    resetInput();
+}
+
 function resetCalculatorVariables() {
     currentInput = null;
     num1 = null;
@@ -241,91 +263,19 @@ CALC_BUTTON_DOT.addEventListener("click", () => {
 });
 
 CALC_BUTTON_ADD.addEventListener("click", () => {
-    if (num1 != null && operator != null) { 
-        num2 = currentInput === null ? 0 : convertInputToNumber();
-        currentInput = convertNumberToString(executeOperation(num1, num2));
-        num1 = currentInput;
-        num2 = null;
-        isNegated = currentInput < 0;
-        if (isNegated) {
-            currentInput = -1 * currentInput;
-        }
-        updateCalculatorDisplay();
-    } else if (num1 != null && numEquals != null && currentInput === null) {
-        num1 = numEquals;
-        numEquals = null;
-    } else {
-        num1 = convertInputToNumber();
-    }
-    operator = "+";
-    currentInput = null;
-    resetInput();
+    operate("+");
 });
 
 CALC_BUTTON_SUBTRACT.addEventListener("click", () => {
-    if (num1 != null && operator != null) { 
-        num2 = currentInput === null ? 0 : convertInputToNumber();
-        currentInput = convertNumberToString(executeOperation(num1, num2));
-        num1 = currentInput;
-        num2 = null;
-        isNegated = currentInput < 0;
-        if (isNegated) {
-            currentInput = -1 * currentInput;
-        }
-        updateCalculatorDisplay();
-    } else if (num1 != null && numEquals != null && currentInput === null) {
-        num1 = numEquals;
-        numEquals = null;
-    } else {
-        num1 = convertInputToNumber();
-    }
-    operator = "-";
-    currentInput = null;
-    resetInput();
+    operate("-");
 });
 
 CALC_BUTTON_MULTIPLY.addEventListener("click", () => {
-    if (num1 != null && operator != null) { 
-        num2 = currentInput === null ? 0 : convertInputToNumber();
-        currentInput = convertNumberToString(executeOperation(num1, num2));
-        num1 = currentInput;
-        num2 = null;
-        isNegated = currentInput < 0;
-        if (isNegated) {
-            currentInput = -1 * currentInput;
-        }
-        updateCalculatorDisplay();
-    } else if (num1 != null && numEquals != null && currentInput === null) {
-        num1 = numEquals;
-        numEquals = null;
-    } else {
-        num1 = convertInputToNumber();
-    }
-    operator = "*";
-    currentInput = null;
-    resetInput();
+    operate("*");
 });
 
 CALC_BUTTON_DIVIDE.addEventListener("click", () => {
-    if (num1 != null && operator != null) { 
-        num2 = currentInput === null ? 0 : convertInputToNumber();
-        currentInput = convertNumberToString(executeOperation(num1, num2));
-        num1 = currentInput;
-        num2 = null;
-        isNegated = currentInput < 0;
-        if (isNegated) {
-            currentInput = -1 * currentInput;
-        }
-        updateCalculatorDisplay();
-    } else if (num1 != null && numEquals != null && currentInput === null) {
-        num1 = numEquals;
-        numEquals = null;
-    } else {
-        num1 = convertInputToNumber();
-    }
-    operator = "/";
-    currentInput = null;
-    resetInput();
+    operate("/");
 });
 
 CALC_BUTTON_EQUALS.addEventListener("click", () => {
