@@ -11,7 +11,7 @@ body {
 }
 
 .calculator {
-    background-color: #f2a39a;
+    background-color: #c714c7;
     border: 3px solid black;
     border-radius: 15px;
     width: 400px;
@@ -57,5 +57,15 @@ body {
 }
 
 .buttons button {
-background-color: #e91de9;
+    background-color: #f89a8f;
 }
+
+#add,
+#subtract,
+#multiply,
+#divide,
+#negate,
+#all-clear {
+    background-color: #e06b5e;
+}
+

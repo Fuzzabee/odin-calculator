@@ -67,7 +67,8 @@ function multiply(num1, num2) {
 }
 
 function divide(num1, num2) {
-    if (num2 === 0) {
+    if (num2 === 0 || num2 === null) {
+        disableButtons();
         return "DIV BY 0";
     }
     return num1 / num2;
@@ -96,18 +97,14 @@ function convertInputToNumber() {
     }
 
     if (isNegated) {
-        console.log(`convertInputToNumber returning ${-1 * inputAsNumber}`);
         return -1 * inputAsNumber;
     }
-    console.log(`convertInputToNumber returning ${inputAsNumber}`);
     return inputAsNumber;
 }
 
 function convertNumberToString(number) {
     let returnString = number.toString();
     let validLength = number < 0 ? 11 : 10;
-    console.log(`returnString = ${returnString}`);
-    console.log(`validLength = ${validLength}`);
 
     if (returnString.length <= validLength) {
         return returnString;
@@ -142,12 +139,12 @@ function disableButtons() {
     CALC_BUTTON_DOT.disabled = true;
 }
 
-function displayVariables() {
-    console.log(`num1 = ${num1}`);
-    console.log(`operator = ${operator}`);
-    console.log(`currentInput = ${currentInput}`);
-    console.log(`numEquals = ${numEquals}`);
-}
+// function displayVariables() {
+//     console.log(`num1 = ${num1}`);
+//     console.log(`operator = ${operator}`);
+//     console.log(`currentInput = ${currentInput}`);
+//     console.log(`numEquals = ${numEquals}`);
+// }
 
 function enableButtons() {
     for (let i = 0; i < 10; i++) {
@@ -165,14 +162,12 @@ function enableButtons() {
 }
 
 function executeOperation() {
-    console.log(`typeof num1 = ${typeof num1} typeof num2 = ${typeof num2}`);
     // First time calling operation after all clear or equals
     if (operator === null) {
         num1 = convertInputToNumber();
         return;
     }
 
-    // We already have an operation, do operation and save result in num1
     switch (operator) {
         case "+":
             return add(num1, num2);
@@ -189,8 +184,10 @@ function operate(op) {
     if (num1 != null && operator != null) { 
         if (operator === "+" || operator === "-") {
             num2 = currentInput === null ? 0 : convertInputToNumber()
-        } else {
+        } else if (operator === "*") {
             num2 = currentInput === null ? 1 : convertInputToNumber();
+        } else {
+            num2 = currentInput === null ? null : convertInputToNumber();
         }
         currentInput = convertNumberToString(executeOperation(num1, num2));
         num1 = convertInputToNumber();
