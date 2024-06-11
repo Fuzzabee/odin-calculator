@@ -88,6 +88,10 @@ function addDigitToDisplay(toAdd) {
 }
 
 function convertInputToNumber() {
+    if (currentInput === null) {
+        return null;
+    }
+
     let inputAsNumber;
     
     if (hasDecimal) {
@@ -139,12 +143,12 @@ function disableButtons() {
     CALC_BUTTON_DOT.disabled = true;
 }
 
-// function displayVariables() {
-//     console.log(`num1 = ${num1}`);
-//     console.log(`operator = ${operator}`);
-//     console.log(`currentInput = ${currentInput}`);
-//     console.log(`numEquals = ${numEquals}`);
-// }
+function displayVariables() {
+    console.log(`num1 = ${num1}`);
+    console.log(`operator = ${operator}`);
+    console.log(`currentInput = ${currentInput}`);
+    console.log(`numEquals = ${numEquals}`);
+}
 
 function enableButtons() {
     for (let i = 0; i < 10; i++) {
@@ -197,10 +201,7 @@ function operate(op) {
             currentInput = -1 * currentInput;
         }
         updateCalculatorDisplay();
-    } else if (num1 != null && numEquals != null && currentInput === null) {
-        num1 = numEquals;
-        numEquals = null;
-    } else {
+    } else if (num1 === null && operator === null) {
         num1 = convertInputToNumber();
     }
     operator = op;
@@ -295,11 +296,119 @@ CALC_BUTTON_EQUALS.addEventListener("click", () => {
             currentInput = -1 * currentInput;
         }
         updateCalculatorDisplay();
-    } else if (num1 === null && operator === null) {
+    } else if (operator === null && currentInput === null && numEquals != null) {
+        num1 = numEquals;
+    } else if (num1 === null && operator === null && numEquals === null && num2 === null) {
         num1 = convertInputToNumber();
     }
     operator = null;
     resetInput();
+});
+
+document.addEventListener("keydown", (keyboard) => {
+    console.log(keyboard.key);
+    switch (keyboard.key) {
+        case "1": { 
+            currentInput = addDigitToDisplay(1);
+            updateCalculatorDisplay();
+            break;  
+        }
+        case "2": {
+            currentInput = addDigitToDisplay(2);
+            updateCalculatorDisplay();
+            break;
+        }
+        case "3": { 
+            currentInput = addDigitToDisplay(3);
+            updateCalculatorDisplay();
+            break;
+        }
+        case "4": {
+            currentInput = addDigitToDisplay(4);
+            updateCalculatorDisplay();
+            break;
+        }
+        case "5": {
+            currentInput = addDigitToDisplay(5); 
+            updateCalculatorDisplay();
+            break;
+        }
+        case "6": {
+            currentInput = addDigitToDisplay(6); 
+            updateCalculatorDisplay();
+            break;
+        }
+        case "7": {
+            currentInput = addDigitToDisplay(7); 
+            updateCalculatorDisplay();
+            break;
+        }
+        case "8": { 
+            currentInput = addDigitToDisplay(8);
+            updateCalculatorDisplay();
+            break;
+        }
+        case "9": { 
+            currentInput = addDigitToDisplay(9); 
+            updateCalculatorDisplay();
+            break;
+        }
+        case "0": {
+            currentInput = addDigitToDisplay(0); 
+            updateCalculatorDisplay();
+            break;
+        }
+        case "+": {
+            operate("+");
+            break;
+        }
+        case "-": {
+            operate("-");
+            break;
+        }
+        case "*": {
+            operate("*");
+            break;
+        }
+        case "/": {
+            operate("/");
+            break;
+        }
+        case "Enter": {
+            keyboard.preventDefault();
+            keyboard.stopPropagation();
+            if (num1 != null && operator != null) { 
+                num2 = currentInput === null ? 0 : convertInputToNumber();
+                numEquals = executeOperation(num1, num2);
+                currentInput = convertNumberToString(numEquals);
+                num1 = currentInput;
+                num2 = null;
+                isNegated = currentInput < 0;
+                if (isNegated) {
+                    currentInput = -1 * currentInput;
+                }
+                updateCalculatorDisplay();
+            } else if (operator === null && currentInput === null && numEquals != null) {
+                num1 = numEquals;
+            } else if (num1 === null && operator === null && numEquals === null && num2 === null) {
+                num1 = convertInputToNumber();
+            }
+            operator = null;
+            resetInput();
+            break;
+        }
+        case ".": {
+            if (!hasDecimal) {
+                hasDecimal = true;
+                if (currentInput === null) {
+                    currentInput = addDigitToDisplay("0");
+                }
+                currentInput = addDigitToDisplay(".");
+                updateCalculatorDisplay();
+            }
+            break;
+        }
+    }
 });
 
 ////////////
