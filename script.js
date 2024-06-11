@@ -36,6 +36,7 @@ const CALC_BUTTON_EQUALS = document.querySelector(".calculator #equals");
 const CALC_BUTTON_DOT = document.querySelector(".calculator #dot");
 const CALC_BUTTON_ALL_CLEAR = document.querySelector(".calculator #all-clear");
 const CALC_BUTTON_NEGATE = document.querySelector(".calculator #negate");
+const CALC_BUTTON_BACKSPACE = document.querySelector(".calculator #backspace");
 
 ////////////////////////////
 //  VARIABLE DECLARATION  //
@@ -55,7 +56,7 @@ let displayIsErrored = false;
 /////////////////
 
 function add(num1, num2) {
-    return num1 + num2;
+    return +num1 + +num2;
 }
 
 function subtract(num1, num2) {
@@ -85,6 +86,15 @@ function addDigitToDisplay(toAdd) {
     }
 
     return currentInput + toAdd;
+}
+
+function backspace() {
+    if (currentInput === null ||
+        currentInput.length === 1) {
+        return null;
+    }
+
+    return currentInput.substring(0, currentInput.length - 1);
 }
 
 function convertInputToNumber() {
@@ -141,6 +151,7 @@ function disableButtons() {
     CALC_BUTTON_NEGATE.disabled = true;
     CALC_BUTTON_EQUALS.disabled = true;
     CALC_BUTTON_DOT.disabled = true;
+    CALC_BUTTON_BACKSPACE.disabled = true;
 }
 
 function displayVariables() {
@@ -163,6 +174,7 @@ function enableButtons() {
     CALC_BUTTON_NEGATE.disabled = false;
     CALC_BUTTON_EQUALS.disabled = false;
     CALC_BUTTON_DOT.disabled = false;
+    CALC_BUTTON_BACKSPACE.disabled = false;
 }
 
 function executeOperation() {
@@ -185,28 +197,38 @@ function executeOperation() {
 }
 
 function operate(op) {
+    displayVariables();
+    if (num1 != null && operator != null && currentInput === null) {
+        operator = op;
+        return;
+    }
+
     if (num1 != null && operator != null) { 
         if (operator === "+" || operator === "-") {
-            num2 = currentInput === null ? 0 : convertInputToNumber()
+            num2 = currentInput === null ? 0 : convertInputToNumber();
         } else if (operator === "*") {
             num2 = currentInput === null ? 1 : convertInputToNumber();
         } else {
             num2 = currentInput === null ? null : convertInputToNumber();
         }
-        currentInput = convertNumberToString(executeOperation(num1, num2));
-        num1 = convertInputToNumber();
+        numEquals = executeOperation(num1, num2);
+        currentInput = convertNumberToString(numEquals);
+        num1 = numEquals;
         num2 = null;
         isNegated = currentInput < 0;
         if (isNegated) {
             currentInput = -1 * currentInput;
         }
         updateCalculatorDisplay();
-    } else if (num1 === null && operator === null) {
+    } else if (num1 === null && operator === null && currentInput != null) {
         num1 = convertInputToNumber();
+    } else if (num1 === null && operator === null && currentInput === null && numEquals != null) {
+        num1 = numEquals;
     }
     operator = op;
     currentInput = null;
     resetInput();
+    displayVariables();
 }
 
 function resetCalculatorVariables() {
@@ -284,12 +306,17 @@ CALC_BUTTON_DIVIDE.addEventListener("click", () => {
     operate("/");
 });
 
+CALC_BUTTON_BACKSPACE.addEventListener("click", () => {
+    currentInput = backspace();
+    updateCalculatorDisplay();
+});
+
 CALC_BUTTON_EQUALS.addEventListener("click", () => {
     if (num1 != null && operator != null) { 
         num2 = currentInput === null ? 0 : convertInputToNumber();
         numEquals = executeOperation(num1, num2);
         currentInput = convertNumberToString(numEquals);
-        num1 = currentInput;
+        num1 = null;
         num2 = null;
         isNegated = currentInput < 0;
         if (isNegated) {
@@ -381,7 +408,7 @@ document.addEventListener("keydown", (keyboard) => {
                 num2 = currentInput === null ? 0 : convertInputToNumber();
                 numEquals = executeOperation(num1, num2);
                 currentInput = convertNumberToString(numEquals);
-                num1 = currentInput;
+                num1 = null;
                 num2 = null;
                 isNegated = currentInput < 0;
                 if (isNegated) {
@@ -406,6 +433,11 @@ document.addEventListener("keydown", (keyboard) => {
                 currentInput = addDigitToDisplay(".");
                 updateCalculatorDisplay();
             }
+            break;
+        }
+        case "Backspace": {
+            currentInput = backspace();
+            updateCalculatorDisplay();
             break;
         }
     }

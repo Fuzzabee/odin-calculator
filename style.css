@@ -60,12 +60,17 @@ body {
     background-color: #f89a8f;
 }
 
+#backspace {
+    width: 160px;
+}
+
 #add,
 #subtract,
 #multiply,
 #divide,
 #negate,
-#all-clear {
+#all-clear,
+#backspace {
     background-color: #e06b5e;
 }
 
