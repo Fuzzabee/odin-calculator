@@ -162,6 +162,7 @@ function enableButtons() {
 }
 
 function executeOperation() {
+    console.log(`typeof num1 = ${typeof num1} typeof num2 = ${typeof num2}`);
     // First time calling operation after all clear or equals
     if (operator === null) {
         num1 = convertInputToNumber();
@@ -183,9 +184,13 @@ function executeOperation() {
 
 function operate(op) {
     if (num1 != null && operator != null) { 
-        num2 = currentInput === null ? 0 : convertInputToNumber();
+        if (op === "+" || op === "-") {
+            num2 = currentInput === null ? 0 : convertInputToNumber()
+        } else {
+            num2 = currentInput === null ? 1 : convertInputToNumber();
+        }
         currentInput = convertNumberToString(executeOperation(num1, num2));
-        num1 = currentInput;
+        num1 = convertInputToNumber();
         num2 = null;
         isNegated = currentInput < 0;
         if (isNegated) {
