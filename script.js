@@ -48,6 +48,7 @@ let operator = null;
 let currentInput = null;
 let isNegated = false;
 let hasDecimal = false;
+let displayIsErrored = false;
 
 /////////////////
 //  FUNCTIONS  //
@@ -92,32 +93,91 @@ function convertInputToNumber() {
     }
 
     if (isNegated) {
+        console.log(`convertInputToNumber returning ${-1 * inputAsNumber}`);
         return -1 * inputAsNumber;
     }
+    console.log(`convertInputToNumber returning ${inputAsNumber}`);
     return inputAsNumber;
+}
+
+function convertNumberToString(number) {
+    let returnString = number.toString();
+    let validLength = number < 0 ? 11 : 10;
+    console.log(`returnString = ${returnString}`);
+    console.log(`validLength = ${validLength}`);
+
+    if (returnString.length <= validLength) {
+        return returnString;
+    }
+
+    if (returnString.charAt() === ".") {
+        return returnString.substring(0, validLength + 1);
+    }
+
+    for (let i = 0; i < validLength; i++) {
+        if (returnString.charAt(i) === ".") {
+            return returnString.substring(0, validLength + 1);
+        }
+    }
+
+    disableButtons();
+    return "ERROR";
+}
+
+function disableButtons() {
+    for (let i = 0; i < 10; i++) {
+        let button = CALC_BUTTONS_NUMBERS[i];
+        button.disabled = true;
+    }
+    CALC_BUTTON_ADD.disabled = true;
+    CALC_BUTTON_SUBTRACT.disabled = true;
+    CALC_BUTTON_MULTIPLY.disabled = true;
+    CALC_BUTTON_DIVIDE.disabled = true;
+
+    CALC_BUTTON_NEGATE.disabled = true;
+    CALC_BUTTON_EQUALS.disabled = true;
+    CALC_BUTTON_DOT.disabled = true;
 }
 
 function displayVariables() {
     console.log(`num1 = ${num1}`);
     console.log(`operator = ${operator}`);
     console.log(`currentInput = ${currentInput}`);
+    console.log(`numEquals = ${numEquals}`);
+}
+
+function enableButtons() {
+    for (let i = 0; i < 10; i++) {
+        let button = CALC_BUTTONS_NUMBERS[i];
+        button.disabled = false;
+    }
+    CALC_BUTTON_ADD.disabled = false;
+    CALC_BUTTON_SUBTRACT.disabled = false;
+    CALC_BUTTON_MULTIPLY.disabled = false;
+    CALC_BUTTON_DIVIDE.disabled = false;
+
+    CALC_BUTTON_NEGATE.disabled = false;
+    CALC_BUTTON_EQUALS.disabled = false;
+    CALC_BUTTON_DOT.disabled = false;
 }
 
 function executeOperation() {
     // First time calling operation after all clear or equals
     if (operator === null) {
         num1 = convertInputToNumber();
-        return op;
+        return;
     }
 
     // We already have an operation, do operation and save result in num1
     switch (operator) {
         case "+":
-            num1 = add(num1, num2);
-            break;
+            return add(num1, num2);
         case "-":
-            num1 = subtract(num1, num2);
-            break;
+            return subtract(num1, num2);
+        case "*":
+            return multiply(num1, num2);
+        case "/":
+            return divide(num1, num2);
     }
 }
 
@@ -129,6 +189,12 @@ function resetCalculatorVariables() {
     operator = null;
     isNegated = false;
     hasDecimal = false;
+}
+
+function resetInput() {
+    hasDecimal = false;
+    isNegated = false;
+    currentInput = null;
 }
 
 function updateCalculatorDisplay() {
@@ -149,6 +215,7 @@ for (let i = 0; i < 10; i++) {
 }
 
 CALC_BUTTON_ALL_CLEAR.addEventListener("click", () => {
+    enableButtons();
     resetCalculatorVariables();
     updateCalculatorDisplay();
 });
@@ -174,27 +241,111 @@ CALC_BUTTON_DOT.addEventListener("click", () => {
 });
 
 CALC_BUTTON_ADD.addEventListener("click", () => {
-    displayVariables();
     if (num1 != null && operator != null) { 
-        num2 = convertInputToNumber();
-        num1 = executeOperation(num1, num2);
+        num2 = currentInput === null ? 0 : convertInputToNumber();
+        currentInput = convertNumberToString(executeOperation(num1, num2));
+        num1 = currentInput;
+        num2 = null;
+        isNegated = currentInput < 0;
+        if (isNegated) {
+            currentInput = -1 * currentInput;
+        }
+        updateCalculatorDisplay();
+    } else if (num1 != null && numEquals != null && currentInput === null) {
+        num1 = numEquals;
+        numEquals = null;
     } else {
         num1 = convertInputToNumber();
     }
     operator = "+";
     currentInput = null;
-    displayVariables()
+    resetInput();
 });
 
-// CALC_BUTTON_EQUALS.addEventListener("click", () => {
-//     if (num2 === null && num1 === null && currentInput === null) {
-//         return;
-//     }
+CALC_BUTTON_SUBTRACT.addEventListener("click", () => {
+    if (num1 != null && operator != null) { 
+        num2 = currentInput === null ? 0 : convertInputToNumber();
+        currentInput = convertNumberToString(executeOperation(num1, num2));
+        num1 = currentInput;
+        num2 = null;
+        isNegated = currentInput < 0;
+        if (isNegated) {
+            currentInput = -1 * currentInput;
+        }
+        updateCalculatorDisplay();
+    } else if (num1 != null && numEquals != null && currentInput === null) {
+        num1 = numEquals;
+        numEquals = null;
+    } else {
+        num1 = convertInputToNumber();
+    }
+    operator = "-";
+    currentInput = null;
+    resetInput();
+});
 
-//     if (num2 === null && num1 === null) {
-        
-//     }
-// });
+CALC_BUTTON_MULTIPLY.addEventListener("click", () => {
+    if (num1 != null && operator != null) { 
+        num2 = currentInput === null ? 0 : convertInputToNumber();
+        currentInput = convertNumberToString(executeOperation(num1, num2));
+        num1 = currentInput;
+        num2 = null;
+        isNegated = currentInput < 0;
+        if (isNegated) {
+            currentInput = -1 * currentInput;
+        }
+        updateCalculatorDisplay();
+    } else if (num1 != null && numEquals != null && currentInput === null) {
+        num1 = numEquals;
+        numEquals = null;
+    } else {
+        num1 = convertInputToNumber();
+    }
+    operator = "*";
+    currentInput = null;
+    resetInput();
+});
+
+CALC_BUTTON_DIVIDE.addEventListener("click", () => {
+    if (num1 != null && operator != null) { 
+        num2 = currentInput === null ? 0 : convertInputToNumber();
+        currentInput = convertNumberToString(executeOperation(num1, num2));
+        num1 = currentInput;
+        num2 = null;
+        isNegated = currentInput < 0;
+        if (isNegated) {
+            currentInput = -1 * currentInput;
+        }
+        updateCalculatorDisplay();
+    } else if (num1 != null && numEquals != null && currentInput === null) {
+        num1 = numEquals;
+        numEquals = null;
+    } else {
+        num1 = convertInputToNumber();
+    }
+    operator = "/";
+    currentInput = null;
+    resetInput();
+});
+
+CALC_BUTTON_EQUALS.addEventListener("click", () => {
+    if (num1 != null && operator != null) { 
+        num2 = currentInput === null ? 0 : convertInputToNumber();
+        numEquals = executeOperation(num1, num2);
+        currentInput = convertNumberToString(numEquals);
+        num1 = currentInput;
+        num2 = null;
+        isNegated = currentInput < 0;
+        if (isNegated) {
+            currentInput = -1 * currentInput;
+        }
+        updateCalculatorDisplay();
+    } else if (num1 === null && operator === null) {
+        num1 = convertInputToNumber();
+    }
+    operator = null;
+    resetInput();
+});
 
 ////////////
 //  MAIN  //
